@@ -1,9 +1,11 @@
+import time
 import tkinter as tk
 from tkinter import messagebox, font
 import random
 from textwrap import wrap
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import Paragraph, Spacer
 from datetime import datetime
 
 class RandomNumberGeneratorApp:
@@ -33,6 +35,15 @@ class RandomNumberGeneratorApp:
         t.setFont("Times-Roman",14)
         t.textLines(pdfstring)
         c.drawText(t)
+        # Altezza della riga per il testo
+        line_height = 14
+
+        # Definisci il testo con parte del testo come link
+        normal_text = 'L\'estrazione è stata effettuta tramite il software "Randomizer", il codice sorgente è pubblicamente consultabile su https://github.com/sp-asl2abruzzo/Randomizer' 
+
+        # Posiziona il testo normale
+        c.setFont("Times-Roman", 8)
+        c.drawString(40, 40, normal_text)
         c.showPage()
         c.save()
 
@@ -74,6 +85,8 @@ class RandomNumberGeneratorApp:
 
         self.entry_seed = tk.Entry(self.frame1, bg="#ffff99")
         self.entry_seed.grid(row=4, column=1)
+        self.clock_button = tk.Button(self.frame1, text='\u23F0', command=self.update_entry_with_timestamp)
+        self.clock_button.grid(row=4, column=2)
 
         self.label_exclude = tk.Label(self.frame1, text="Numeri da Escludere:")
         self.label_exclude.grid(row=5, column=0, sticky="N", pady=40)
@@ -118,6 +131,16 @@ class RandomNumberGeneratorApp:
             self.output_text.config(state="disabled")
         except ValueError:
             messagebox.showerror("Errore", "Assicurati di inserire valori validi per i campi.")
+
+    def update_entry_with_timestamp(self):
+        # Ottenere il timestamp locale
+        local_timestamp = int(time.time_ns())
+
+
+        # Scrivere il timestamp nella Entry
+        self.entry_seed.delete(0, tk.END)  # Cancella il contenuto attuale della Entry
+        self.entry_seed.insert(0, local_timestamp)  # Inserisci il timestamp nella Entry
+
 
 def main():
     root = tk.Tk()
